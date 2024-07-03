@@ -25,7 +25,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(nav_msgs REQUIRED)
-find_package(geometry_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 find_package(RobotinoAPI2 REQUIRED)
 find_package(rto_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
@@ -65,7 +65,7 @@ target_link_libraries(
 )
 
 
-ament_target_dependencies(rto_node rclcpp rto_msgs std_msgs geometry_msgs sensor_msgs tf2 tf2_ros nav_msgs builtin_interfaces) 
+ament_target_dependencies(rto_node rclcpp rto_msgs std_msgs tf2_geometry_msgs sensor_msgs tf2 tf2_ros nav_msgs builtin_interfaces) 
 
 add_executable(
   rto_laserrangefinder_node
@@ -75,7 +75,7 @@ add_executable(
   src/RTOLaserRangeFinderNode.cpp
 )
 
-ament_target_dependencies(rto_laserrangefinder_node rclcpp rto_msgs std_msgs geometry_msgs sensor_msgs tf2 tf2_ros builtin_interfaces) 
+ament_target_dependencies(rto_laserrangefinder_node rclcpp rto_msgs std_msgs tf2_geometry_msgs sensor_msgs tf2 tf2_ros builtin_interfaces) 
 
 
 target_link_libraries(
@@ -91,7 +91,7 @@ add_executable(
   src/RTOCameraNode.cpp
 )
 
-ament_target_dependencies(rto_camera_node rclcpp rto_msgs std_msgs geometry_msgs sensor_msgs tf2 tf2_ros builtin_interfaces) 
+ament_target_dependencies(rto_camera_node rclcpp rto_msgs std_msgs tf2_geometry_msgs sensor_msgs tf2 tf2_ros builtin_interfaces) 
 
 target_link_libraries(
   rto_camera_node

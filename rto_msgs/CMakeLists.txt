@@ -41,15 +41,10 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/MotorReadings.msg"
   "msg/PowerReadings.msg"
   "msg/SetGrapplerAxes.msg"
-  "msg/BHAReadings.msg"
   "msg/EncoderReadings.msg"
-  "msg/GripperState.msg"
-  "msg/NorthStarReadings.msg"
-  "msg/SetBHAPressures.msg"
   "msg/SetGrapplerAxis.msg"
   "srv/ResetOdometry.srv"
   "srv/SetEncoderPosition.srv"
-  "srv/SetGripperState.srv"
 
   DEPENDENCIES builtin_interfaces
 )
