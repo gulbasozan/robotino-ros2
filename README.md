@@ -1,10 +1,10 @@
-# RTO-ROS 2
+# RTO-ROS 2 Humble
 
 This repository contains code for packages that enable ROS 2 support for the **Festo Robotino 3**.
 
-This repo is verified to work on a host laptop which had Ubuntu 20.04 LTS with ROS2 Foxy.
+This repo is verified to work on a host laptop which had Ubuntu 22.04 LTS with ROS2 Humble.
 
-The original code was taken from [dietriro's robotino repository](https://github.com/dietriro/rto_core) and adapted for ROS2
+The original code was taken from [dietriro's robotino repository](https://github.com/dietriro/rto_core) and adapted for ROS2 and this repo is forked from [Rahul-K-A's robotino ros2 repository](https://github.com/Rahul-K-A/robotino-ros2) and adapted for ROS2 Humble.
 
 **Note:** Not all functionality has been enabled. North Star support, BHA support, and gripper support have been disabled.
 
