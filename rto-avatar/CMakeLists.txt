@@ -16,6 +16,7 @@ find_package(std_msgs REQUIRED)
 find_package(RobotinoAPI2 REQUIRED)
 find_package(rto_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
+find_package(sensor_msgs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -30,7 +31,7 @@ add_executable(rto_avatar_safe_teleop src/SafeKeyboardTeleop.cpp)
 add_executable(rto_avatar_safe_omnidrive src/SafeOmniDriveNode.cpp ../rto_node/src/ComROS.cpp src/SafeOmniDrive.cpp)
 
 ament_target_dependencies(rto_avatar_safe_teleop rclcpp geometry_msgs)
-ament_target_dependencies(rto_avatar_safe_omnidrive rclcpp geometry_msgs rto_msgs std_msgs builtin_interfaces)
+ament_target_dependencies(rto_avatar_safe_omnidrive rclcpp geometry_msgs rto_msgs std_msgs builtin_interfaces sensor_msgs)
 
 target_link_libraries(
   rto_avatar_safe_omnidrive
