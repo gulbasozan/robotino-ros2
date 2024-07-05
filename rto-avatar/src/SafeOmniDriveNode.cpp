@@ -35,6 +35,8 @@ void SafeOmniDriveNode::initModules()
     com_.setAddress(hostname_.c_str());
 
     safe_omni_drive_.setComId(com_.id());
+    safe_omni_drive_.setMaxMin(max_linear_vel_, min_linear_vel_, max_angular_vel_, min_angular_vel_);
+
     com_.connectToServer(false);
 }
 
