@@ -24,4 +24,11 @@ def generate_launch_description():
             name='rto_laser',
             parameters=[{'hostname': LaunchConfiguration("hostname")}]
         ),
+        Node(
+            package='rto-avatar',
+            namespace='',
+            executable='rto_avatar_safe_omnidrive',
+            name='avatar_safe_omnidrive',
+            parameters=[{'hostname': LaunchConfiguration("hostname")}]
+        ),
     ])
