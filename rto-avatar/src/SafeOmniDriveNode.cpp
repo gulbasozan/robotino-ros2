@@ -13,12 +13,16 @@ SafeOmniDriveNode::SafeOmniDriveNode():
 	this->declare_parameter("max_angular_vel", 1.0);
 	this->declare_parameter("min_angular_vel", 0.1);
 
+    this->declare_parameter("safety_radius", 0.4);
+
     hostname_ = this->get_parameter("hostname").as_string();
 	
 	max_linear_vel_ = this->get_parameter("max_linear_vel").as_double();
 	min_linear_vel_ = this->get_parameter("min_linear_vel").as_double();
 	max_angular_vel_ = this->get_parameter("max_angular_vel").as_double();
 	min_angular_vel_ = this->get_parameter("min_angular_vel").as_double();
+
+    safety_radius_ = this->get_parameter("safety_radius").as_double();
 
     com_.setName("SafeOmniDrive");   
 

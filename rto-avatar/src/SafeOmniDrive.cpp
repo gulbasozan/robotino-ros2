@@ -37,7 +37,6 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 	double linear_y = msg->linear.y;
 	double angular = msg->angular.z;
 
-	double safety_radius = 0.4;
 
 	if ( fabs( linear_x ) > max_linear_vel_ )
 	{
@@ -98,7 +97,7 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 			safety_breach = safety_breach | isInsideSafetyBubble(
 												distance_sensor_readings_.points[i].x,
 												distance_sensor_readings_.points[i].y,
-												safety_radius);
+												safety_radius_);
 		}
 		if (!safety_breach)
 			setVelocity( linear_x, linear_y, angular);
@@ -108,7 +107,7 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 				not_safe_to_navigate = not_safe_to_navigate | isInsideSafetyBubble(
 					distance_sensor_readings_.points[i].x - distance_x,
 					distance_sensor_readings_.points[i].y - distance_y,
-					safety_radius
+					safety_radius_
 				);	
 			}
 			if (!not_safe_to_navigate)

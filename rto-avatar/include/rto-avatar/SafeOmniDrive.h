@@ -24,10 +24,11 @@ class SafeOmniDrive: public rec::robotino::api2::OmniDrive
         sensor_msgs::msg::PointCloud distance_sensor_readings_;
         std::mutex distance_sensor_mutex_;
 
-        double max_linear_vel_;
-        double min_linear_vel_;
-        double max_angular_vel_;
-        double min_angular_vel_;
+        double max_linear_vel_,
+             min_linear_vel_,
+             max_angular_vel_,
+             min_angular_vel_,
+             safety_radius_;
 
         void safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPtr msg);
         void distanceSensorsCallback(const sensor_msgs::msg::PointCloud::SharedPtr msg);

@@ -15,7 +15,11 @@ class SafeOmniDriveNode : public rclcpp::Node
     private:
         rclcpp::TimerBase::SharedPtr timer_;
         std::string hostname_;
-        double max_linear_vel_, min_linear_vel_, max_angular_vel_, min_angular_vel_;
+        double max_linear_vel_, 
+            min_linear_vel_,
+            max_angular_vel_, 
+            min_angular_vel_, 
+            safety_radius_;
 
         ComROS com_;
         SafeOmniDrive safe_omni_drive_;
