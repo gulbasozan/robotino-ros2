@@ -88,6 +88,10 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 	if (!distance_sensor_readings_.points.empty())
 	{
 		bool safety_breach = false;
+		bool not_safe_to_navigate = false;
+
+		double distance_x = linear_x * 0.8;
+		double distance_y = linear_y * 0.8;
 
 		for (unsigned int i = 0; i < 9; ++i)
 		{
@@ -98,9 +102,22 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 		}
 		if (!safety_breach)
 			setVelocity( linear_x, linear_y, angular);
+		else {
+
+			for (unsigned int i = 0; i < 9; ++i) {
+				not_safe_to_navigate = not_safe_to_navigate | isInsideSafetyBubble(
+					distance_sensor_readings_.points[i].x - distance_x,
+					distance_sensor_readings_.points[i].y - distance_y,
+					safety_radius
+				);	
+			}
+			if (!not_safe_to_navigate)
+				setVelocity(linear_x, linear_y, angular);
+			else setVelocity(0.00, 0.00, angular);
+		}
 		
 		std::ostringstream os;
-		os << "SafetyBreach: " << boolToString(safety_breach); 
+		os << "SafetyBreach: " << boolToString(safety_breach) << "\nSafeToNavigate: " << boolToString(!not_safe_to_navigate); 
 		RCLCPP_INFO(rclcpp::get_logger(parent_node_name_), "%s", os.str().c_str());
 	}
 
