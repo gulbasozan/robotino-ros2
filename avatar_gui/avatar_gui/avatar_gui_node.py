@@ -14,10 +14,11 @@ class AvatarGUINode(Node):
         super().__init__("avatar_gui")
         
         self.safe_cmd_vel_pub_ = self.create_publisher(Twist, 'rto3/safe_cmd_vel', 10)
-        timer_period = 0.5
-        self.timer = self.create_timer(timer_period, self.timer_callback)
+        # timer_period = 0.5
+        # self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.get_logger().info("AvatarGUINode initialized.")
 
-    def timer_callback(self):
+    def pub_callback(self):
         msg = Twist()
         msg.linear.x = 0.5
         msg.linear.y = 0.0
@@ -32,6 +33,17 @@ class AvatarGUIInstance(Ui_AvatarGUI):
         self.ros_node_ = ros_node
         self.setupUi(main_window)
 
+
+    def main(self):
+        print("forward button: ", self.forward)
+
+        self.forward.clicked.connect(self.button_callback)
+
+    def button_callback(self):
+        print("forward buttton clicked\n")
+        self.ros_node_.pub_callback()
+
+
 def ros_spin_thread(node):
     rclpy.spin(node)
 
@@ -45,7 +57,7 @@ def main(args=None):
     app = QtWidgets.QApplication(sys.argv)
     main_window = QtWidgets.QMainWindow()
     AvatarGUI = AvatarGUIInstance(node, main_window)
-    AvatarGUI.setupUi(main_window)
+    AvatarGUI.main()
     main_window.show()
     app.exec_()
 
