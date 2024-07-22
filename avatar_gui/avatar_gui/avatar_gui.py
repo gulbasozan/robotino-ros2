@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './designs/avatar_gui.ui'
+# Form implementation generated from reading ui file '/home/gulbasozan/robotino_ros2_ws/src/robotino-ros2/avatar_gui/designs/avatar_gui.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.9
 #
@@ -14,8 +14,11 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AvatarGUI(object):
     def setupUi(self, AvatarGUI):
         AvatarGUI.setObjectName("AvatarGUI")
-        AvatarGUI.resize(996, 762)
+        AvatarGUI.resize(996, 799)
         AvatarGUI.setCursor(QtGui.QCursor(QtCore.Qt.ClosedHandCursor))
+        AvatarGUI.setStyleSheet("background-color: #eff6ee;\n"
+"color: #38302e;\n"
+"")
         self.centralwidget = QtWidgets.QWidget(AvatarGUI)
         self.centralwidget.setObjectName("centralwidget")
         self.camera_interface = QtWidgets.QGroupBox(self.centralwidget)
@@ -44,44 +47,74 @@ class Ui_AvatarGUI(object):
         font = QtGui.QFont()
         font.setPointSize(32)
         self.forward.setFont(font)
+        self.forward.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;\n"
+"")
+        self.forward.setFlat(False)
         self.forward.setObjectName("forward")
-        # self.forward.clicked.connect(self.button_callback)
-        self.pos_angular = QtWidgets.QPushButton(self.teleop)
-        self.pos_angular.setGeometry(QtCore.QRect(230, 30, 91, 91))
-        font = QtGui.QFont()
-        font.setPointSize(32)
-        self.pos_angular.setFont(font)
-        self.pos_angular.setObjectName("pos_angular")
         self.neg_angular = QtWidgets.QPushButton(self.teleop)
         self.neg_angular.setGeometry(QtCore.QRect(10, 30, 91, 91))
         font = QtGui.QFont()
         font.setPointSize(32)
         self.neg_angular.setFont(font)
+        self.neg_angular.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
         self.neg_angular.setObjectName("neg_angular")
-        self.left = QtWidgets.QPushButton(self.teleop)
-        self.left.setGeometry(QtCore.QRect(10, 140, 91, 91))
+        self.pos_angular = QtWidgets.QPushButton(self.teleop)
+        self.pos_angular.setGeometry(QtCore.QRect(230, 30, 91, 91))
         font = QtGui.QFont()
         font.setPointSize(32)
-        self.left.setFont(font)
-        self.left.setObjectName("left")
-        self.reverse = QtWidgets.QPushButton(self.teleop)
-        self.reverse.setGeometry(QtCore.QRect(120, 140, 91, 91))
-        font = QtGui.QFont()
-        font.setPointSize(32)
-        self.reverse.setFont(font)
-        self.reverse.setObjectName("reverse")
+        self.pos_angular.setFont(font)
+        self.pos_angular.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
+        self.pos_angular.setObjectName("pos_angular")
         self.right = QtWidgets.QPushButton(self.teleop)
         self.right.setGeometry(QtCore.QRect(230, 140, 91, 91))
         font = QtGui.QFont()
         font.setPointSize(32)
         self.right.setFont(font)
+        self.right.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
         self.right.setObjectName("right")
+        self.left = QtWidgets.QPushButton(self.teleop)
+        self.left.setGeometry(QtCore.QRect(10, 140, 91, 91))
+        font = QtGui.QFont()
+        font.setPointSize(32)
+        self.left.setFont(font)
+        self.left.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
+        self.left.setObjectName("left")
         self.halt = QtWidgets.QPushButton(self.teleop)
         self.halt.setGeometry(QtCore.QRect(10, 250, 311, 61))
         font = QtGui.QFont()
         font.setPointSize(32)
         self.halt.setFont(font)
+        self.halt.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
         self.halt.setObjectName("halt")
+        self.backward = QtWidgets.QPushButton(self.teleop)
+        self.backward.setGeometry(QtCore.QRect(120, 140, 91, 91))
+        font = QtGui.QFont()
+        font.setPointSize(32)
+        self.backward.setFont(font)
+        self.backward.setStyleSheet("background-color:  #6f6866;\n"
+"color:  #eff6ee;\n"
+"border-radius: 16px;")
+        self.backward.setObjectName("backward")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(340, 700, 81, 61))
+        self.label_3.setText("")
+        self.label_3.setPixmap(QtGui.QPixmap("/home/gulbasozan/robotino_ros2_ws/src/robotino-ros2/avatar_gui/designs/../assets/hvl_robotics_logo_72x72-removebg-preview.png"))
+        self.label_3.setObjectName("label_3")
+        self.label_4 = QtWidgets.QLabel(self.centralwidget)
+        self.label_4.setGeometry(QtCore.QRect(430, 720, 161, 17))
+        self.label_4.setObjectName("label_4")
         AvatarGUI.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(AvatarGUI)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 996, 22))
@@ -103,9 +136,20 @@ class Ui_AvatarGUI(object):
         self.label.setText(_translate("AvatarGUI", "CLI"))
         self.teleop.setTitle(_translate("AvatarGUI", "Teleoperate"))
         self.forward.setText(_translate("AvatarGUI", "W"))
-        self.pos_angular.setText(_translate("AvatarGUI", "E"))
         self.neg_angular.setText(_translate("AvatarGUI", "Q"))
-        self.left.setText(_translate("AvatarGUI", "A"))
-        self.reverse.setText(_translate("AvatarGUI", "S"))
+        self.pos_angular.setText(_translate("AvatarGUI", "E"))
         self.right.setText(_translate("AvatarGUI", "D"))
+        self.left.setText(_translate("AvatarGUI", "A"))
         self.halt.setText(_translate("AvatarGUI", "Space"))
+        self.backward.setText(_translate("AvatarGUI", "S"))
+        self.label_4.setText(_translate("AvatarGUI", "HVL Robotics Lab 2024"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    AvatarGUI = QtWidgets.QMainWindow()
+    ui = Ui_AvatarGUI()
+    ui.setupUi(AvatarGUI)
+    AvatarGUI.show()
+    sys.exit(app.exec_())

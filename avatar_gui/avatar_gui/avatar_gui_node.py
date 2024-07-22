@@ -9,6 +9,28 @@ import threading
 
 from geometry_msgs.msg import Twist
 
+PUSH_BUTTON_IDLE_STYLESHEET = """
+            QPushButton {
+                background-color: #6f6866; 
+                color: #eff6ee; 
+                border-radius: 16px;
+            }
+            QPushButton:pressed {
+                background-color: #38302e    
+            }
+        
+    """
+PUSH_BUTTON_PRESSED_STYLESHEET = """
+            QPushButton {
+                background-color: #38302e; 
+                color: #eff6ee; 
+                border-radius: 16px;
+            }
+            QPushButton:pressed {
+                background-color: #38302e    
+            }
+        
+    """
 
 class AvatarGUINode(Node):
     def __init__(self):
@@ -35,30 +57,54 @@ class KeyPressFilter(QtCore.QObject):
         self.gui = gui
 
     def eventFilter(self, obj, event):
+        vel_x_ = 0.00
+        vel_y_ = 0.00
+        vel_omega_ = 0.00
+
         if event.type() == QtCore.QEvent.KeyPress:
             match event.key():
                 case QtCore.Qt.Key_W:
-                    print("forward Pressed")
-                    self.ros_node.pubCallback(0.05, 0.00, 0.00)
-                    self.gui.forward.setStyleSheet("QPushButton {background-color: black}")
+                    vel_x_ = 0.05
+                    self.gui.forward.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
                 case QtCore.Qt.Key_A:
-                    print("left Pressed")
+                    vel_y_ = 0.05
+                    self.gui.left.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
                 case QtCore.Qt.Key_S:
-                    print("backward Pressed")
+                    vel_x_ = -0.05
+                    self.gui.backward.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
                 case QtCore.Qt.Key_D:
-                    print("right Pressed")
+                    vel_y_ = -0.05
+                    self.gui.right.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
+                case QtCore.Qt.Key_Q:
+                    vel_omega_ = -0.05
+                    self.gui.neg_angular.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
+                case QtCore.Qt.Key_E:
+                    vel_omega_ = 0.05
+                    self.gui.pos_angular.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
+                case QtCore.Qt.Key_Space:
+                    vel_x_ = vel_y_ = vel_omega_ = 0.00
+                    self.gui.halt.setStyleSheet(PUSH_BUTTON_PRESSED_STYLESHEET)
+
+            self.ros_node.pubCallback(vel_x_, vel_y_, vel_omega_)
+
             return True
 
         if event.type() == QtCore.QEvent.KeyRelease:
             match event.key():
                 case QtCore.Qt.Key_W:
-                    self.gui.forward.setStyleSheet("QPushButton {background-color: white}")
+                    self.gui.forward.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
                 case QtCore.Qt.Key_A:
-                    print("left Released")
+                    self.gui.left.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
                 case QtCore.Qt.Key_S:
-                    print("backward Released")
+                    self.gui.backward.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
                 case QtCore.Qt.Key_D:
-                    print("right Released")
+                    self.gui.right.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
+                case QtCore.Qt.Key_Q:
+                    self.gui.neg_angular.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
+                case QtCore.Qt.Key_E:
+                    self.gui.pos_angular.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
+                case QtCore.Qt.Key_Space:
+                    self.gui.halt.setStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
             return True
 
         return super().eventFilter(obj, event)
@@ -68,13 +114,49 @@ class AvatarGUIInstance(Ui_AvatarGUI):
         super().__init__()
         self.ros_node_ = ros_node
         self.setupUi(main_window)
+        self.initButtonStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
+        self.initButtonSlotConnections(self.buttonCallback)
 
-    def main(self):
-        self.forward.clicked.connect(self.buttonCallback)
+    def buttonCallback(self, key):
+        vel_x_ = 0.00
+        vel_y_ = 0.00
+        vel_omega_ = 0.00
 
-    def buttonCallback(self):
-        print("forward buttton clicked\n")
-        self.ros_node_.pubCallback(0.00, 0.05, 0.00)
+        match key:
+            case QtCore.Qt.Key_W:
+                vel_x_ = 0.05
+            case QtCore.Qt.Key_A:
+                vel_y_ = 0.05
+            case QtCore.Qt.Key_S:
+                vel_x_ = -0.05
+            case QtCore.Qt.Key_D:
+                vel_y_ = -0.05
+            case QtCore.Qt.Key_Q:
+                vel_omega_ = -0.05
+            case QtCore.Qt.Key_E:
+                vel_omega_ = 0.05
+            case QtCore.Qt.Key_Space:
+                vel_x_ = vel_y_ = vel_omega_ = 0.00
+
+        self.ros_node_.pubCallback(vel_x_, vel_y_, vel_omega_)
+
+    def initButtonSlotConnections(self, callback):
+        self.forward.clicked.connect(lambda: callback(QtCore.Qt.Key_W))
+        self.backward.clicked.connect(lambda: callback(QtCore.Qt.Key_S))
+        self.right.clicked.connect(lambda: callback(QtCore.Qt.Key_D))
+        self.left.clicked.connect(lambda: callback(QtCore.Qt.Key_A))
+        self.pos_angular.clicked.connect(lambda: callback(QtCore.Qt.Key_E))
+        self.neg_angular.clicked.connect(lambda: callback(QtCore.Qt.Key_Q))
+        self.halt.clicked.connect(lambda: callback(QtCore.Qt.Key_Space))
+
+    def initButtonStyleSheet(self, styleSheet):
+        self.forward.setStyleSheet(styleSheet)
+        self.backward.setStyleSheet(styleSheet)
+        self.right.setStyleSheet(styleSheet)
+        self.left.setStyleSheet(styleSheet)
+        self.pos_angular.setStyleSheet(styleSheet)
+        self.neg_angular.setStyleSheet(styleSheet)
+        self.halt.setStyleSheet(styleSheet)
 
 def ros_spin_thread(node):
     rclpy.spin(node)
@@ -89,7 +171,6 @@ def main(args=None):
     app = QtWidgets.QApplication(sys.argv)
     main_window = QtWidgets.QMainWindow() 
     AvatarGUI = AvatarGUIInstance(node, main_window)
-    AvatarGUI.main()
 
     key_press_filter = KeyPressFilter(node, AvatarGUI)
     app.installEventFilter(key_press_filter)
