@@ -31,4 +31,11 @@ def generate_launch_description():
             name='avatar_safe_omnidrive',
             parameters=[{'hostname': LaunchConfiguration("hostname")}]
         ),
+        Node(
+            package='avatar_gui',
+            namespace='',
+            executable='avatar_gui_node',
+            name='avatar_gui',
+            parameters=[{'hostname': LaunchConfiguration("hostname")}]
+        )
     ])
