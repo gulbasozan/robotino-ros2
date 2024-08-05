@@ -6,7 +6,7 @@
 SafeKeyboardTeleop::SafeKeyboardTeleop(struct termios &cooked, struct termios &raw, int &kfd)
     : Node("safe_keyboard_teleop"), cooked_(cooked), raw_(raw), kfd_(kfd)
 {
-    safe_cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("/rto3/safe_cmd_vel", 1);
+    safe_cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("safe_cmd_vel", 1);
     readParams();
     first_publish_ = this->get_clock()->now();
     last_publish_ = this->get_clock()->now();

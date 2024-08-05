@@ -7,8 +7,8 @@ using std::placeholders::_1;
 SafeOmniDrive::SafeOmniDrive(rclcpp::Node* parent_node) 
 {
 	parent_node_name_ = std::string(parent_node->get_name());
-    safe_cmd_vel_sub_ = parent_node->create_subscription<geometry_msgs::msg::Twist>("rto3/safe_cmd_vel", 10, std::bind(&SafeOmniDrive::safeCmdVelCallback, this, _1));
-	distance_sensors_sub_ = parent_node->create_subscription<sensor_msgs::msg::PointCloud>("rto3/distance_sensors", 10, std::bind(&SafeOmniDrive::distanceSensorsCallback, this, _1));
+    safe_cmd_vel_sub_ = parent_node->create_subscription<geometry_msgs::msg::Twist>("safe_cmd_vel", 10, std::bind(&SafeOmniDrive::safeCmdVelCallback, this, _1));
+	distance_sensors_sub_ = parent_node->create_subscription<sensor_msgs::msg::PointCloud>("distance_sensors", 10, std::bind(&SafeOmniDrive::distanceSensorsCallback, this, _1));
 }
 
 SafeOmniDrive::~SafeOmniDrive()

@@ -26,14 +26,14 @@ def generate_launch_description():
         ),
         Node(
             package='rto-avatar',
-            namespace='',
+            namespace='rto3',
             executable='rto_avatar_safe_omnidrive',
             name='avatar_safe_omnidrive',
             parameters=[{'hostname': LaunchConfiguration("hostname")}]
         ),
         Node(
             package='avatar_gui',
-            namespace='',
+            namespace='rto3',
             executable='avatar_gui_node',
             name='avatar_gui',
             parameters=[{'hostname': LaunchConfiguration("hostname")}]

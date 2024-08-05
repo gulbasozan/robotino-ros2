@@ -36,7 +36,7 @@ class AvatarGUINode(Node):
     def __init__(self):
         super().__init__("avatar_gui")
         
-        self.safe_cmd_vel_pub_ = self.create_publisher(Twist, 'rto3/safe_cmd_vel', 10)
+        self.safe_cmd_vel_pub_ = self.create_publisher(Twist, 'safe_cmd_vel', 10)
         self.safe_cmd_vel_msg_ = Twist()
 
         self.get_logger().info("AvatarGUINode initialized.")
