@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "avatar_gui_node = avatar_gui.avatar_gui_node:main"
+            "avatar_gui_node = avatar_gui.avatar_gui_node:main",
+            "rtc_webcam_node = avatar_gui.rtc_webcam_node:main"
         ],
     },
 )
