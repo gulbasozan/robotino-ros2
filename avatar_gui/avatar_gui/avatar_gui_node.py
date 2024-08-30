@@ -3,11 +3,15 @@
 import rclpy
 from rclpy.node import Node
 from avatar_gui.avatar_gui import Ui_AvatarGUI, QtWidgets, QtCore
-from PyQt5.Qt import Qt
+from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtCore import QThread, pyqtSignal, QObject
 import sys
 import threading
 
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Image
+
+from cv_bridge import CvBridge, CvBridgeError
 
 PUSH_BUTTON_IDLE_STYLESHEET = """
             QPushButton {
@@ -32,14 +36,43 @@ PUSH_BUTTON_PRESSED_STYLESHEET = """
         
     """
 
-class AvatarGUINode(Node):
+# Qt signal needs to be defined under a QObject instance
+# This is why it has a seperate class instead of
+# having it under the ROS Node
+class RosImageEmitter(QObject):
+    image_signal = pyqtSignal(QImage) # Needs to be defined here specifically
+    
     def __init__(self):
+        super().__init__()
+
+class AvatarGUINode(Node):
+    def __init__(self, emitter):
         super().__init__("avatar_gui")
         
         self.safe_cmd_vel_pub_ = self.create_publisher(Twist, 'safe_cmd_vel', 10)
         self.safe_cmd_vel_msg_ = Twist()
 
+        self.img_raw_sub_ = self.create_subscription(Image, 'img_raw', self.imgRawListenerCallback, 10)
+        self.img_raw_msg_ = Image()
+
+        self.bridge_ = CvBridge() # For image conversion
+
+        self.emitter = emitter
+
         self.get_logger().info("AvatarGUINode initialized.")
+
+    def imgRawListenerCallback(self, msg):
+        try:
+            cv_img = self.bridge_.imgmsg_to_cv2(msg, "bgr8")
+        except CvBridgeError as error:
+            self.get_logger().error(f"Could not convert the msg to cv2 img:\n {error}")
+        
+        # Need to format image to display it on QtApp
+        height, width, channel = cv_img.shape
+        bytes_per_line = 3 * width
+        qt_image = QImage(cv_img.data, width, height, bytes_per_line, QImage.Format_RGB888).rgbSwapped()
+
+        self.emitter.image_signal.emit(qt_image)
 
     def pubCallback(self, vel_x, vel_y, vel_omega):
         self.safe_cmd_vel_msg_.linear.x = vel_x 
@@ -114,8 +147,11 @@ class AvatarGUIInstance(Ui_AvatarGUI):
         super().__init__()
         self.ros_node_ = ros_node
         self.setupUi(main_window)
+
         self.initButtonStyleSheet(PUSH_BUTTON_IDLE_STYLESHEET)
-        self.initButtonSlotConnections(self.buttonCallback)
+        self.initButtonSlotConnections(self.buttonCallback) # For non-keyboard clicks
+
+        self.ros_node_.emitter.image_signal.connect(self.updateImage) # run updateImage when a signal emitted
 
     def buttonCallback(self, key):
         vel_x_ = 0.00
@@ -158,30 +194,49 @@ class AvatarGUIInstance(Ui_AvatarGUI):
         self.neg_angular.setStyleSheet(styleSheet)
         self.halt.setStyleSheet(styleSheet)
 
-def ros_spin_thread(node):
-    rclpy.spin(node)
+    def updateImage(self, qt_image):
+        pixmap = QPixmap.fromImage(qt_image)
+        self.camera_label.setPixmap(pixmap)
+
+# Run ROS as a Qt thread bc Qt signal
+class ROSThread(QThread):
+    def __init__(self, node):
+        super().__init__()
+        self.node = node
+
+    # Ovveride defult QThread run function
+    def run(self):
+        rclpy.spin(self.node)
+        rclpy.shutdown()
 
 def main(args=None):
     rclpy.init(args=args)
-    node = AvatarGUINode()
 
-    spin_thread = threading.Thread(target=ros_spin_thread, args=(node,))
-    spin_thread.start()
+    # Init Image Signal Emitter
+    emitter = RosImageEmitter()
 
+    # Init ROS Node
+    node = AvatarGUINode(emitter)
+    ros_thread = ROSThread(node)
+    ros_thread.start()
+
+    # Init QtApp
     app = QtWidgets.QApplication(sys.argv)
     main_window = QtWidgets.QMainWindow() 
     AvatarGUI = AvatarGUIInstance(node, main_window)
 
+    # Init event filter
     key_press_filter = KeyPressFilter(node, AvatarGUI)
     app.installEventFilter(key_press_filter)
 
+    # Run QtApp
     main_window.show()
     app.exec_()
 
+    # Stop ROS Node
     node.destroy_node()
     rclpy.shutdown()
-    spin_thread.join()
-
+    ros_thread.join()
 
 if __name__ == "__main__":
     main()

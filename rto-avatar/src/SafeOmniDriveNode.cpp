@@ -27,7 +27,7 @@ SafeOmniDriveNode::SafeOmniDriveNode():
     com_.setName("SafeOmniDrive");   
 
     initModules();
-    timer_ = this->create_wall_timer(200ms, std::bind(&SafeOmniDriveNode::spin, this));
+    // timer_ = this->create_wall_timer(200ms, std::bind(&SafeOmniDriveNode::spin, this));
 
 }
 

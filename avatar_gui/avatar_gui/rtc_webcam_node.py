@@ -139,7 +139,7 @@ class RTCWebcamNode(Node):
     def __init__(self ):
         super().__init__("rtc_webcam")
 
-        self.image_raw_pub_ = self.create_publisher(Image, "img_raw", 10)
+        self.image_raw_pub_ = self.create_publisher(Image, "rto3/img_raw", 10)
         self.image_raw_msg_ = Image()
 
         self.bridge = CvBridge()

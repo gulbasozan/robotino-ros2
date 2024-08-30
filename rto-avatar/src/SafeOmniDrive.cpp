@@ -89,7 +89,7 @@ void SafeOmniDrive::safeCmdVelCallback(const geometry_msgs::msg::Twist::SharedPt
 		bool safety_breach = false;
 		bool not_safe_to_navigate = false;
 
-		double distance_x = linear_x * 0.8;
+		double distance_x = linear_x * 0.8; 
 		double distance_y = linear_y * 0.8;
 
 		for (unsigned int i = 0; i < 9; ++i)
