@@ -14,7 +14,9 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError 
 
-import sys
+from aiohttp import web, ClientSession, WSMsgType
+import json
+
 import threading
 
 logger = logging.getLogger("pc")
@@ -58,6 +60,43 @@ class RemoteVideoStreamTrack(VideoStreamTrack):
         logger.info("Retruning frame.\n")
         return frame # Return frame for disposing using MediaBlackhole
 
+# Server signaling
+async def consumeSignaling(pc):
+    print("WebSocket is starting..")
+    session = ClientSession()
+    async with session.ws_connect("http://0.0.0.0:8080/ws") as ws:
+        status = False
+        print("WebSocket connection established")
+        opener = {"type": "opener", "sender": "answerClient"}
+        await ws.send_json(opener)
+        async for msg in ws:
+            print(f"\n--------------------------------------\nMessage received: \n {msg.data}\n---------------------------------------------------")
+            if msg.type == WSMsgType.TEXT:
+                if msg.data == "close cmd":
+                    await ws.close()
+                    status = False
+                    break
+                else:
+                    try:
+                        data = json.loads(msg.data)
+                        if data['type'] == "status" and data['status'] == "ready":
+                            status = True
+                        elif status and data['type'] == "offer":
+                            if pc.signalingState == "closed": return # TODO: Instead of exiting, handle remote peer disconnection
+                            print("Remote description is set")  
+                            sdp = RTCSessionDescription(data['sdp'], data['type'])
+                            await pc.setRemoteDescription(sdp)
+
+                            await pc.setLocalDescription(await pc.createAnswer())
+                            message = {"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}
+
+                            await ws.send_json(message)
+                    except Exception as e:
+                        status = False
+                        print(f"Hit to exception {e}")
+            elif msg.type == WSMsgType.ERROR:
+                break
+            
 # Copy-Paste Signaling
 async def consume_signaling(pc, signaling ):
     while True:
@@ -80,7 +119,7 @@ async def consume_signaling(pc, signaling ):
 
 async def answer(
         pc, 
-        signaling,
+        # signaling, # Uncomment for copy-paste signaling
         recorder,
         node
     ):
@@ -104,18 +143,19 @@ async def answer(
         async def on_ended():
             log_info("Track %s ended", track.kind)
 
-    await signaling.connect()
+    # await signaling.connect() # Uncomment for copy-paste signaling
 
-    await consume_signaling(pc, signaling )
+    # await consume_signaling(pc, signaling )
+    await consumeSignaling(pc) # Comment-out for copy-paste signaling
 
 def rtc_eventloop(args, node ):
-    signaling = create_signaling(args)
+    # signaling = create_signaling(args) # Uncomment for copy-paste signaling
     pc = RTCPeerConnection()
     recorder = MediaBlackhole()
     # recorder = MediaRecorder("/home/gulbasozan/video.mp4")
     coro = answer(
         pc,
-        signaling, 
+        # signaling, # Uncomment for copy-paste signaling 
         recorder,
         node,
     )
@@ -131,7 +171,7 @@ def rtc_eventloop(args, node ):
         pass
     finally:
         loop.run_until_complete(pc.close())
-        loop.run_until_complete(signaling.close())
+        # loop.run_until_complete(signaling.close()) # Uncomment for copy-paste signaling
         loop.run_until_complete(recorder.stop())
         loop.close()
         
