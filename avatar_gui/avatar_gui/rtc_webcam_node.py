@@ -64,7 +64,8 @@ class RemoteVideoStreamTrack(VideoStreamTrack):
 async def consumeSignaling(pc):
     print("WebSocket is starting..")
     session = ClientSession()
-    async with session.ws_connect("http://0.0.0.0:8080/ws") as ws:
+    ROBOTINO_IPADDR = "172.31.1.145"
+    async with session.ws_connect(f"ws://{ROBOTINO_IPADDR}:8080/ws") as ws:
         status = False
         print("WebSocket connection established")
         opener = {"type": "opener", "sender": "answerClient"}
